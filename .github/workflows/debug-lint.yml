@@ -12,6 +12,6 @@ jobs:
         node-version: 18
     - run: |
         npm install jshint --global > npm.log 2>&1; echo "::warning::npm exit $?"
-        find ./server/database -name "*.js" -exec jshint {} + > out.txt 2>&1; echo "::warning::jshint exit $?"
+        find ./server/database -name "*.js" -exec jshint {} + > out.txt 2>&1 || echo "::warning::jshint exit $?"
         head -30 out.txt | while IFS= read -r l; do echo "::warning::$l"; done
         tail -5 npm.log | while IFS= read -r l; do echo "::warning::npm $l"; done
