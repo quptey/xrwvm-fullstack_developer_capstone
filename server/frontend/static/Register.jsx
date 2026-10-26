@@ -1,125 +1,79 @@
 import React, { useState } from "react";
 import "./Register.css";
+import Header from "../Header/Header";
 
-/** User registration form for the Best Cars Django application. */
 const Register = () => {
   const [userName, setUserName] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+
+  const register_url = window.location.origin + "/djangoapp/register";
 
   const gohome = () => {
-    window.location.href = "/";
+    window.location.href = window.location.origin;
   };
 
-  const register = async (event) => {
-    event.preventDefault();
-    setErrorMessage("");
-    setIsSubmitting(true);
-
-    try {
-      const response = await fetch(`${window.location.origin}/djangoapp/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userName, firstName, lastName, email, password }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok && data.userName && !data.error) {
-        sessionStorage.setItem("username", data.userName);
-        window.location.href = "/";
-        return;
-      }
-
-      if (data.error === "Already Registered") {
-        setErrorMessage("This username is already registered. Please choose another username.");
-      } else {
-        setErrorMessage(data.error || "Registration failed. Please check your details and try again.");
-      }
-    } catch (error) {
-      setErrorMessage("Could not connect to the registration service. Please try again.");
-    } finally {
-      setIsSubmitting(false);
+  const register = async (e) => {
+    e.preventDefault();
+    const res = await fetch(register_url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userName: userName,
+        password: password,
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+      }),
+    });
+    const json = await res.json();
+    if (json.status) {
+      sessionStorage.setItem("username", json.userName);
+      sessionStorage.setItem("firstname", firstName);
+      sessionStorage.setItem("lastname", lastName);
+      window.location.href = window.location.origin;
+    } else if (json.error === "Already Registered") {
+      alert("The user with same username is already registered");
+      window.location.href = window.location.origin;
     }
   };
 
   return (
-    <div className="register_page">
+    <div>
+      <Header />
       <div className="register_container">
-        <div className="register_header">
-          <h1 className="register_title">Create an account</h1>
-          <button className="register_close" type="button" onClick={gohome} aria-label="Close registration">
-            ×
-          </button>
+        <div className="header">
+          <span className="text">Sign-up</span>
+          <a href="/" onClick={gohome} className="close_link" aria-label="Close">×</a>
         </div>
-
-        <p className="register_subtitle">Register to share your dealership experience.</p>
-
-        <form onSubmit={register} className="register_form">
-          <label htmlFor="register-username">Username</label>
-          <input
-            id="register-username"
-            name="username"
-            type="text"
-            autoComplete="username"
-            value={userName}
-            onChange={(event) => setUserName(event.target.value)}
-            required
-          />
-
-          <label htmlFor="register-first-name">First name</label>
-          <input
-            id="register-first-name"
-            name="first_name"
-            type="text"
-            autoComplete="given-name"
-            value={firstName}
-            onChange={(event) => setFirstName(event.target.value)}
-            required
-          />
-
-          <label htmlFor="register-last-name">Last name</label>
-          <input
-            id="register-last-name"
-            name="last_name"
-            type="text"
-            autoComplete="family-name"
-            value={lastName}
-            onChange={(event) => setLastName(event.target.value)}
-            required
-          />
-
-          <label htmlFor="register-email">Email</label>
-          <input
-            id="register-email"
-            name="email"
-            type="email"
-            autoComplete="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            required
-          />
-
-          <label htmlFor="register-password">Password</label>
-          <input
-            id="register-password"
-            name="password"
-            type="password"
-            autoComplete="new-password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            required
-          />
-
-          {errorMessage && <p className="register_error" role="alert">{errorMessage}</p>}
-
-          <button className="register_submit" type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Registering…" : "Register"}
-          </button>
+        <form onSubmit={register}>
+          <div className="inputs">
+            <div className="input">
+              <label htmlFor="username">Username</label>
+              <input id="username" type="text" name="username" placeholder="Username" className="input_field" required onChange={(e) => setUserName(e.target.value)} />
+            </div>
+            <div className="input">
+              <label htmlFor="first_name">First Name</label>
+              <input id="first_name" type="text" name="first_name" placeholder="First Name" className="input_field" required onChange={(e) => setFirstName(e.target.value)} />
+            </div>
+            <div className="input">
+              <label htmlFor="last_name">Last Name</label>
+              <input id="last_name" type="text" name="last_name" placeholder="Last Name" className="input_field" required onChange={(e) => setLastName(e.target.value)} />
+            </div>
+            <div className="input">
+              <label htmlFor="email">Email</label>
+              <input id="email" type="email" name="email" placeholder="Email" className="input_field" required onChange={(e) => setEmail(e.target.value)} />
+            </div>
+            <div className="input">
+              <label htmlFor="psw">Password</label>
+              <input id="psw" name="psw" type="password" placeholder="Password" className="input_field" required onChange={(e) => setPassword(e.target.value)} />
+            </div>
+          </div>
+          <div className="submit_panel">
+            <input className="submit" type="submit" value="Register" />
+          </div>
         </form>
       </div>
     </div>

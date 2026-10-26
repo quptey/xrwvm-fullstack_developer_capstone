@@ -14,9 +14,10 @@ const Header = () => {
     if (json) {
       let username = sessionStorage.getItem('username');
       sessionStorage.removeItem('username');
+      sessionStorage.removeItem('firstname');
+      sessionStorage.removeItem('lastname');
+      alert("Logging out "+username+"...");
       window.location.href = window.location.origin;
-      window.location.reload();
-      alert("Logging out "+username+"...")
     }
     else {
       alert("The user could not be logged out.")
@@ -24,7 +25,10 @@ const Header = () => {
   };
     
 //The default home page items are the login details panel
-let home_page_items =  <div></div>
+let home_page_items =  <div className="input_panel">
+    <a className="homepage_links" href="/login">Login</a>
+    <a className="homepage_links" href="/register">Register</a>
+  </div>
 
 //Gets the username in the current session
 let curr_user = sessionStorage.getItem('username')
