@@ -1,0 +1,13 @@
+name: debug-lint
+on:
+  push:
+    branches: [debug-lint]
+jobs:
+  d:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - run: |
+        pip install -q flake8
+        npm install -g jshint >/dev/null 2>&1
+        (find . -name "*.py" -exec flake8 {} + ; find ./server/database -name "*.js" -exec jshint {} +) 2>&1 | head -60 | while IFS= read -r l; do echo "::warning::$l"; done
