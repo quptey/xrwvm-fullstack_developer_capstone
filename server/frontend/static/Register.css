@@ -1,0 +1,13 @@
+.register_page { min-height: 70vh; display: flex; justify-content: center; align-items: flex-start; padding: 40px 16px; font-family: Arial, Helvetica, sans-serif; color: #243447; }
+.register_container { width: 100%; max-width: 460px; padding: 28px; background: #fff; border: 1px solid #e2e8f0; border-radius: 14px; box-shadow: 0 8px 28px rgba(16, 42, 67, .10); }
+.register_header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.register_title { margin: 0; color: #102a43; font-size: 1.7rem; }
+.register_close { border: 0; background: transparent; color: #52606d; font-size: 2rem; line-height: 1; cursor: pointer; }
+.register_subtitle { color: #52606d; margin: 10px 0 22px; }
+.register_form { display: flex; flex-direction: column; gap: 8px; }
+.register_form label { margin-top: 8px; font-weight: 600; }
+.register_form input { width: 100%; box-sizing: border-box; padding: 11px 12px; border: 1px solid #bcccdc; border-radius: 7px; font-size: 1rem; }
+.register_form input:focus { outline: 2px solid #7dd3fc; border-color: #0284c7; }
+.register_submit { margin-top: 18px; padding: 12px; border: 0; border-radius: 7px; background: #075985; color: #fff; font-size: 1rem; font-weight: 700; cursor: pointer; }
+.register_submit:disabled { opacity: .65; cursor: wait; }
+.register_error { margin: 8px 0 0; color: #b91c1c; }
