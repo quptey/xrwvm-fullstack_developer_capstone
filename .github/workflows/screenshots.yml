@@ -73,7 +73,7 @@ jobs:
       run: |
         xterm -geometry 150x42+0+0 -fa 'DejaVu Sans Mono' -fs 11 -bg black -fg white \
           -T "theia: ~/xrwvm-fullstack_developer_capstone/server" \
-          -e bash -c 'echo "$ python3 manage.py runserver"; python3 manage.py runserver 2>&1 | tee runserver.log' &
+          -e bash -c 'echo "$ python3 manage.py runserver"; PYTHONUNBUFFERED=1 python3 -u manage.py runserver 2>&1 | tee runserver.log' &
         sleep 8
         curl -s -o /dev/null -w "%{http_code}\n" localhost:8000/
         curl -s localhost:8000/djangoapp/get_dealers | head -c 300

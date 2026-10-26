@@ -22,9 +22,14 @@ def grab(name, wait=1.5):
     print("captured", name, flush=True)
 
 
-def go(page, url, name=None, wait=2.0):
+def go(page, url, name=None, wait=2.0, pretty=False):
     page.goto(url)
     page.wait_for_load_state("networkidle")
+    if pretty:
+        try:
+            page.get_by_text("Pretty-print").click(timeout=3000)
+        except Exception:
+            pass
     if name:
         grab(name, wait)
 
@@ -37,8 +42,12 @@ with sync_playwright() as p:
     ctx = browser.new_context(no_viewport=True)
     page = ctx.new_page()
 
+    # Warm up the window so the first capture is not blank
+    go(page, DJ + "/")
+    time.sleep(3)
+
     # Static pages
-    go(page, DJ + "/about/", "about_us.png")
+    go(page, DJ + "/about/", "about_us.png", 3)
     go(page, DJ + "/contact/", "contact_us.png")
 
     # Dynamic pages before login
@@ -83,8 +92,8 @@ with sync_playwright() as p:
     page.click("a[href$='postreview/15']")
     page.wait_for_load_state("networkidle")
     time.sleep(2)
-    page.fill("#review", "Fantastic services! The team was friendly, "
-                         "honest and helped me pick the right car.")
+    page.fill("#review", "Fantastic services! Great, friendly team and "
+                         "an excellent buying experience.")
     page.fill("input[type=date]", "2026-10-20")
     opts = page.eval_on_selector_all(
         "#cars option", "els => els.map(e => e.value)")
@@ -101,13 +110,13 @@ with sync_playwright() as p:
     grab("added_review.png", 2)
 
     # Express / Mongo endpoints
-    go(page, EX + "/fetchReviews/dealer/15", "dealer_review.png")
-    go(page, EX + "/fetchDealers", "dealerships.png")
-    go(page, EX + "/fetchDealer/15", "dealer_details.png")
-    go(page, EX + "/fetchDealers/Kansas", "kansasDealers.png")
+    go(page, EX + "/fetchReviews/dealer/15", "dealer_review.png", pretty=True)
+    go(page, EX + "/fetchDealers", "dealerships.png", pretty=True)
+    go(page, EX + "/fetchDealer/15", "dealer_details.png", pretty=True)
+    go(page, EX + "/fetchDealers/Kansas", "kansasDealers.png", pretty=True)
 
     # Django proxy endpoints / sentiment analyzer
-    go(page, DJ + "/djangoapp/get_cars", "cars.png")
+    go(page, DJ + "/djangoapp/get_cars", "cars.png", pretty=True)
     go(page, SA + "/analyze/Fantastic%20services", "sentiment_analyzer.png")
 
     # Django admin as root
