@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us | Best Cars</title>
+  <link rel="stylesheet" href="/static/bootstrap.min.css">
+  <link rel="stylesheet" href="/static/style.css">
+  <style>
+    body { margin: 0; font-family: Arial, Helvetica, sans-serif; color: #253043; background: #f5f7fa; line-height: 1.6; }
+    nav { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; padding: 16px 7%; background: #102a43; }
+    nav a { color: #fff; text-decoration: none; margin: 0 10px; }
+    nav .brand { font-size: 1.25rem; font-weight: 700; }
+    nav a[aria-current="page"] { text-decoration: underline; text-underline-offset: 5px; }
+    main { max-width: 960px; margin: 48px auto; padding: 0 24px; }
+    .contact-header, .contact-card { background: #fff; padding: 30px; border-radius: 14px; box-shadow: 0 8px 28px rgba(16,42,67,.08); }
+    .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; margin-top: 18px; }
+    h1, h2 { color: #102a43; }
+    h1 { margin-top: 0; }
+    a { color: #0369a1; }
+    footer { padding: 22px; text-align: center; color: #52606d; }
+  </style>
+</head>
+<body>
+  <nav aria-label="Main navigation">
+    <a class="brand" href="/">Best Cars</a>
+    <div>
+      <a href="/">Home</a>
+      <a href="/dealers/">Dealers</a>
+      <a href="/about/">About Us</a>
+      <a href="/contact/" aria-current="page">Contact Us</a>
+    </div>
+  </nav>
+  <main>
+    <section class="contact-header">
+      <h1>Contact Us</h1>
+      <p>Have a question about a dealership or need help using Best Cars? Our support team is happy to help.</p>
+    </section>
+    <section class="contact-grid" aria-label="Contact information">
+      <article class="contact-card">
+        <h2>Email</h2>
+        <p>For general questions, email <a href="mailto:support@bestcars.example">support@bestcars.example</a>.</p>
+      </article>
+      <article class="contact-card">
+        <h2>Phone</h2>
+        <p>Customer support: +1 (800) 555-0100</p>
+        <p>Monday–Friday, 9:00 a.m.–5:00 p.m.</p>
+      </article>
+      <article class="contact-card">
+        <h2>Dealership information</h2>
+        <p>To ask about a specific location, open the Dealers page and select the dealership you want to learn more about.</p>
+        <p><a href="/dealers/">Browse dealerships</a></p>
+      </article>
+    </section>
+  </main>
+  <footer>&copy; 2026 Best Cars. All rights reserved.</footer>
+</body>
+</html>
