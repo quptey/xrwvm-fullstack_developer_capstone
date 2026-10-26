@@ -1,0 +1,93 @@
+name: 'Run app and capture screenshots'
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [screenshots]
+
+jobs:
+  screenshots:
+    runs-on: ubuntu-latest
+    services:
+      mongo_db:
+        image: mongo:7
+        ports:
+          - 27017:27017
+    env:
+      DISPLAY: ':99'
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 18
+
+    - name: Install desktop tools
+      run: |
+        sudo apt-get update -qq
+        sudo apt-get install -y -qq xvfb xterm imagemagick fonts-dejavu x11-utils
+        Xvfb :99 -screen 0 1440x900x24 &
+        sleep 3
+
+    - name: Start Express + MongoDB backend
+      working-directory: server/database
+      run: |
+        npm install --silent
+        MONGO_URL=mongodb://localhost:27017/ nohup node app.js > express.log 2>&1 &
+        sleep 8
+        curl -s localhost:3030/fetchDealers | head -c 300
+
+    - name: Start sentiment analyzer
+      working-directory: server/djangoapp/microservices
+      run: |
+        pip install -q flask nltk
+        nohup python -m flask run --port 5050 > sentiment.log 2>&1 &
+        sleep 6
+        curl -s "localhost:5050/analyze/Fantastic%20services"
+
+    - name: Build React frontend
+      working-directory: server/frontend
+      run: |
+        npm install --silent
+        CI=false npm run build
+
+    - name: Prepare Django
+      working-directory: server
+      env:
+        DJANGO_SUPERUSER_PASSWORD: 'Capstone#2026'
+      run: |
+        pip install -q -r requirements.txt
+        python manage.py makemigrations --check --dry-run
+        python manage.py migrate
+        python manage.py createsuperuser --noinput --username root --email root@example.com
+
+    - name: Start Django dev server in a terminal window and screenshot it
+      working-directory: server
+      run: |
+        xterm -geometry 150x42+0+0 -fa 'DejaVu Sans Mono' -fs 11 -bg black -fg white \
+          -T "theia: ~/xrwvm-fullstack_developer_capstone/server" \
+          -e bash -c 'echo "$ python3 manage.py runserver"; python3 manage.py runserver 2>&1 | tee runserver.log' &
+        sleep 8
+        curl -s -o /dev/null -w "%{http_code}\n" localhost:8000/
+        curl -s localhost:8000/djangoapp/get_dealers | head -c 300
+        mkdir -p screenshots
+        import -window root screenshots/django_server.png
+
+    - name: Capture app screenshots in a real browser
+      run: |
+        pip install -q playwright
+        python -m playwright install --with-deps chromium
+        python .github/screens/shoot.py server/screenshots
+
+    - name: Upload screenshots
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: capstone-screenshots
+        path: |
+          server/screenshots/*.png
+          server/**/*.log
