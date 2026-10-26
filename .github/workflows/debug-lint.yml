@@ -7,7 +7,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 18
     - run: |
-        pip install -q flake8
-        npm install -g jshint >/dev/null 2>&1
-        (find . -name "*.py" -exec flake8 {} + ; find ./server/database -name "*.js" -exec jshint {} +) 2>&1 | head -60 | while IFS= read -r l; do echo "::warning::$l"; done
+        npm install jshint --global > npm.log 2>&1; echo "::warning::npm exit $?"
+        find ./server/database -name "*.js" -exec jshint {} + > out.txt 2>&1; echo "::warning::jshint exit $?"
+        head -30 out.txt | while IFS= read -r l; do echo "::warning::$l"; done
+        tail -5 npm.log | while IFS= read -r l; do echo "::warning::npm $l"; done
